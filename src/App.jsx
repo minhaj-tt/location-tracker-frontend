@@ -13,6 +13,7 @@ import { ToastContainer } from "react-toastify";
 import axios from "axios";
 import VerifyEmail from "./VerifyEmail";
 import OtpScreen from "./OTP";
+import UserProfileContainer from "./UserProfileContainer";
 
 const App = () => {
   const navigate = useNavigate();
@@ -38,6 +39,7 @@ const App = () => {
       <Route path="/subscription" element={<Subscription />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/otp" element={<OtpScreen />} />
+      <Route path="/user-profile" element={<UserProfileContainer />} />
     </Routes>
   );
 };
