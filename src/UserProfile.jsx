@@ -9,11 +9,14 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-const UserProfile = ({ user, darkMode }) => {
+const UserProfile = ({ user, darkMode, setUser }) => {
   const userData = user;
 
   const [isEditing, setIsEditing] = useState(false);
+  const [imagePreview, setImagePreview] = useState(userData.image || "");
 
   const [formData, setFormData] = useState({
     username: userData.username,
@@ -32,9 +35,57 @@ const UserProfile = ({ user, darkMode }) => {
     }));
   };
 
-  const handleSave = () => {
-    console.log("Profile updated:", formData);
-    setIsEditing(false);
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const fileReader = new FileReader();
+      fileReader.onloadend = () => {
+        setImagePreview(fileReader.result);
+        setFormData((prev) => ({
+          ...prev,
+          image: fileReader.result,
+        }));
+      };
+      fileReader.readAsDataURL(file);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/auth/profile/${userData.id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
+
+      console.log("Profile updated successfully:", response.data);
+
+      localStorage.setItem("user", JSON.stringify(response.data));
+
+      const updatedUser = response.data.user;
+
+      if (setUser) {
+        setUser(updatedUser);
+      }
+
+      setFormData({
+        username: updatedUser.username,
+        email: updatedUser.email || userData.email,
+        image: updatedUser.image,
+        dateOfBirth: updatedUser.dateOfBirth || "02/02/2000",
+        address: updatedUser.address || "Punjab Cooperative Housing Society",
+        phoneNumber: updatedUser.phoneNumber || "+92 336 4804220",
+      });
+
+      toast.success("Profile Updated Successfully!");
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Error updating profile:", err);
+    }
   };
 
   return (
@@ -83,8 +134,8 @@ const UserProfile = ({ user, darkMode }) => {
             </Typography>
 
             <Avatar
-              src={userData.image}
-              alt={userData.username}
+              src={formData.image}
+              alt={formData.username}
               sx={{
                 width: 120,
                 height: 120,
@@ -96,50 +147,40 @@ const UserProfile = ({ user, darkMode }) => {
             />
 
             <Box sx={{ width: "100%", textAlign: "left" }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Typography fontWeight="bold" sx={{ fontSize: "1.2rem" }}>
-                  Username:
-                </Typography>
-                <Typography sx={{ fontSize: "1.2rem" }}>
-                  {userData.username}
-                </Typography>
-              </Box>
-
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Typography fontWeight="bold" sx={{ fontSize: "1.2rem" }}>
-                  Email:
-                </Typography>
-                <Typography sx={{ fontSize: "1.2rem" }}>
-                  {userData.email}
-                </Typography>
-              </Box>
-
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Typography fontWeight="bold" sx={{ fontSize: "1.2rem" }}>
-                  Date of Birth:
-                </Typography>
-                <Typography sx={{ fontSize: "1.2rem" }}>
-                  {" "}
-                  02/02/2000{" "}
-                </Typography>
-              </Box>
-
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Typography fontWeight="bold" sx={{ fontSize: "1.2rem" }}>
-                  Address:
-                </Typography>
-                <Typography sx={{ fontSize: "1.2rem" }}>
-                  Punjab Cooperative Housing Society
-                </Typography>
-              </Box>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Typography fontWeight="bold" sx={{ fontSize: "1.2rem" }}>
-                  Phone Number:
-                </Typography>
-                <Typography sx={{ fontSize: "1.2rem" }}>
-                  +92 336 4804220
-                </Typography>
-              </Box>
+              {[
+                { label: "Username", value: formData.username },
+                { label: "Email", value: formData.email },
+                { label: "Date of Birth", value: formData.dateOfBirth },
+                { label: "Address", value: formData.address },
+                { label: "Phone Number", value: formData.phoneNumber },
+              ].map(({ label, value }) => (
+                <Box
+                  key={label}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Typography
+                    fontWeight="bold"
+                    sx={{
+                      fontSize: "1.2rem",
+                      color: darkMode ? "white" : "black",
+                    }}
+                  >
+                    {label}:
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "1.2rem",
+                      color: darkMode ? "white" : "black",
+                    }}
+                  >
+                    {value}
+                  </Typography>
+                </Box>
+              ))}
             </Box>
 
             <Grid container spacing={3}>
@@ -170,20 +211,51 @@ const UserProfile = ({ user, darkMode }) => {
             <Typography
               variant="h5"
               fontWeight="bold"
-              sx={{ textAlign: "center", marginBottom: 2 }}
+              sx={{
+                textAlign: "center",
+                marginBottom: 2,
+                color: darkMode ? "white" : "black",
+              }}
             >
               Edit Profile
             </Typography>
 
-            {/* Adding new fields */}
-            <TextField
-              label="Profile Image URL"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-            />
+            <Box display="flex" justifyContent="center" mb={2}>
+              <div
+                onClick={() => document.getElementById("fileInput").click()}
+                style={{
+                  cursor: "pointer",
+                  width: "100px",
+                  height: "100px",
+                  borderRadius: "50%",
+                  backgroundColor: "#f0f0f0",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  overflow: "hidden",
+                  margin: "auto",
+                }}
+              >
+                <img
+                  src={imagePreview}
+                  alt="Avatar Preview"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
+              <input
+                type="file"
+                id="fileInput"
+                name="image"
+                onChange={handleFileChange}
+                accept="image/*"
+                style={{ display: "none" }}
+              />
+            </Box>
+
             <TextField
               label="Username"
               name="username"
@@ -191,6 +263,12 @@ const UserProfile = ({ user, darkMode }) => {
               onChange={handleChange}
               fullWidth
               variant="outlined"
+              InputLabelProps={{
+                style: { color: darkMode ? "white" : "black" },
+              }}
+              InputProps={{
+                style: { color: darkMode ? "white" : "black" },
+              }}
             />
             <TextField
               label="Email"
@@ -200,33 +278,13 @@ const UserProfile = ({ user, darkMode }) => {
               fullWidth
               variant="outlined"
               disabled
+              InputLabelProps={{
+                style: { color: darkMode ? "white" : "black" },
+              }}
+              InputProps={{
+                style: { color: darkMode ? "white" : "black" },
+              }}
             />
-            {/* <TextField
-              label="Date of Birth"
-              name="dateOfBirth"
-              type="date"
-              value={formData.dateOfBirth}
-              onChange={handleChange}
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-              variant="outlined"
-            /> */}
-            {/* <TextField
-              label="Address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-            />
-            <TextField
-              label="Phone Number"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-            /> */}
 
             <Grid container spacing={3}>
               <Grid item xs={6}>
@@ -266,7 +324,7 @@ const UserProfile = ({ user, darkMode }) => {
                       : "2px solid #d32f2f",
                     "&:hover": {
                       background: darkMode ? "#d32f2f" : "#d32f2f",
-                      color: darkMode ? "white" : "white",
+                      color: "white",
                     },
                   }}
                 >
