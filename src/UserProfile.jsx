@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 const UserProfile = ({ user, darkMode, setUser }) => {
   const userData = user;
@@ -22,9 +23,9 @@ const UserProfile = ({ user, darkMode, setUser }) => {
     username: userData.username,
     email: userData.email,
     image: userData.image,
-    dateOfBirth: userData.dateOfBirth || "02/02/2000",
-    address: userData.address || "Punjab Cooperative Housing Society",
-    phoneNumber: userData.phoneNumber || "+92 336 4804220",
+    dob: moment(userData.dob).format("YYYY-MM-DD"),
+    address: userData.address,
+    phoneNumber: userData.phone_number,
   });
 
   const handleChange = (e) => {
@@ -52,9 +53,14 @@ const UserProfile = ({ user, darkMode, setUser }) => {
 
   const handleSave = async () => {
     try {
+      const payload = {
+        ...formData,
+        dob: moment(formData.dob).format("YYYY-MM-DD"),
+      };
+
       const response = await axios.put(
         `http://localhost:3000/api/auth/profile/${userData.id}`,
-        formData,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -63,28 +69,25 @@ const UserProfile = ({ user, darkMode, setUser }) => {
       );
 
       console.log("Profile updated successfully:", response.data);
-
       localStorage.setItem("user", JSON.stringify(response.data));
-
       const updatedUser = response.data.user;
-
       if (setUser) {
         setUser(updatedUser);
       }
-
       setFormData({
         username: updatedUser.username,
         email: updatedUser.email || userData.email,
         image: updatedUser.image,
-        dateOfBirth: updatedUser.dateOfBirth || "02/02/2000",
-        address: updatedUser.address || "Punjab Cooperative Housing Society",
-        phoneNumber: updatedUser.phoneNumber || "+92 336 4804220",
+        dob: moment(updatedUser.dob).format("YYYY-MM-DD"),
+        address: updatedUser.address || "",
+        phoneNumber: updatedUser.phoneNumber || "",
       });
 
       toast.success("Profile Updated Successfully!");
       setIsEditing(false);
     } catch (err) {
       console.error("Error updating profile:", err);
+      toast.error("Failed to update profile.");
     }
   };
 
@@ -150,7 +153,7 @@ const UserProfile = ({ user, darkMode, setUser }) => {
               {[
                 { label: "Username", value: formData.username },
                 { label: "Email", value: formData.email },
-                { label: "Date of Birth", value: formData.dateOfBirth },
+                { label: "Date of Birth", value: formData.dob },
                 { label: "Address", value: formData.address },
                 { label: "Phone Number", value: formData.phoneNumber },
               ].map(({ label, value }) => (
@@ -278,6 +281,50 @@ const UserProfile = ({ user, darkMode, setUser }) => {
               fullWidth
               variant="outlined"
               disabled
+              InputLabelProps={{
+                style: { color: darkMode ? "white" : "black" },
+              }}
+              InputProps={{
+                style: { color: darkMode ? "white" : "black" },
+              }}
+            />
+
+            <TextField
+              label="Date of Birth"
+              name="dob"
+              type="date"
+              value={formData.dob}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              InputLabelProps={{
+                style: { color: darkMode ? "white" : "black" },
+              }}
+              InputProps={{
+                style: { color: darkMode ? "white" : "black" },
+              }}
+            />
+            <TextField
+              label="Address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              InputLabelProps={{
+                style: { color: darkMode ? "white" : "black" },
+              }}
+              InputProps={{
+                style: { color: darkMode ? "white" : "black" },
+              }}
+            />
+            <TextField
+              label="Phone Number"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
               InputLabelProps={{
                 style: { color: darkMode ? "white" : "black" },
               }}

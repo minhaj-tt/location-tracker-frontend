@@ -27,6 +27,9 @@ const SignUp = () => {
     email: "",
     password: "",
     image: null,
+    dob: "",
+    address: "",
+    phone_number: "",
   });
 
   const [imagePreview, setImagePreview] = useState(
@@ -72,6 +75,9 @@ const SignUp = () => {
     data.append("username", formData.username);
     data.append("email", formData.email);
     data.append("password", formData.password);
+    data.append("dob", formData.dob);
+    data.append("phone_number", formData.phone_number);
+    data.append("address", formData.address);
     if (formData.image) {
       data.append("image", formData.image);
     }
@@ -91,6 +97,7 @@ const SignUp = () => {
       setIsSignupSuccess(true);
     } catch (error) {
       console.error("Error registering user:", error);
+      toast.error("Failed to register user. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -188,6 +195,40 @@ const SignUp = () => {
               type="email"
               name="email"
               value={formData.email}
+              onChange={handleChange}
+              required
+              margin="normal"
+              variant="outlined"
+            />
+            <TextField
+              fullWidth
+              label="Date of Birth"
+              type="date"
+              name="dob"
+              value={formData.dob}
+              onChange={handleChange}
+              required
+              margin="normal"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              variant="outlined"
+            />
+            <TextField
+              fullWidth
+              label="Address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              required
+              margin="normal"
+              variant="outlined"
+            />
+            <TextField
+              fullWidth
+              label="Phone Number"
+              name="phoneNumber"
+              value={formData.phone_number}
               onChange={handleChange}
               required
               margin="normal"
