@@ -4,11 +4,14 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import {
+  Box,
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  Button,
+  TextField,
+  Typography,
 } from "@mui/material";
 
 const Login = () => {
@@ -66,43 +69,90 @@ const Login = () => {
   };
 
   return (
-    <div className="form-container">
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email</label>
-          <input
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 4,
+        minHeight: "100vh",
+      }}
+    >
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: 500,
+          background: "white",
+          padding: 3,
+          borderRadius: 2,
+          boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          sx={{ textAlign: "center", marginBottom: 3 }}
+        >
+          Login
+        </Typography>
+
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Email"
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
             required
-            placeholder="Enter your email"
+            fullWidth
+            margin="normal"
+            variant="outlined"
           />
-        </div>
-        <div>
-          <label>Password</label>
-          <input
+          <TextField
+            label="Password"
             type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
             required
-            placeholder="Enter your password"
+            fullWidth
+            margin="normal"
+            variant="outlined"
           />
-        </div>
-        <button type="submit">Login</button>
-        <p style={{ textAlign: "center", marginTop: 10 }}>
-          Don’t have an account? <Link to="/signup">Sign Up</Link>
-        </p>
-      </form>
+
+          <Button
+            variant="contained"
+            type="submit"
+            fullWidth
+            sx={{
+              background: "linear-gradient(90deg, #008080, #004d40)", // Linear gradient for button
+              color: "white",
+              padding: "12px 0",
+              marginTop: 2,
+              "&:hover": {
+                background: "linear-gradient(90deg, #004d40, #008080)", // Gradient on hover
+              },
+            }}
+          >
+            Login
+          </Button>
+
+          <Typography
+            variant="body2"
+            sx={{ textAlign: "center", marginTop: 2 }}
+          >
+            Don’t have an account? <Link to="/signup">Sign Up</Link>
+          </Typography>
+        </form>
+      </Box>
 
       <Dialog open={openModal} onClose={() => setOpenModal(false)}>
         <DialogTitle>Cookie Consent</DialogTitle>
         <DialogContent>
-          <p>
+          <Typography>
             We use cookies to improve your experience. Do you accept cookies?
-          </p>
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button
@@ -129,7 +179,7 @@ const Login = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Box>
   );
 };
 

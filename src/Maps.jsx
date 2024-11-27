@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
+import { Box, Typography } from "@mui/material";
 
 const MapDashboard = () => {
   const [locations, setLocations] = useState([]);
@@ -67,15 +68,17 @@ const MapDashboard = () => {
   };
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        width: "800px",
+        justifyContent: "center",
+        width: "1000px",
+        margin: "auto",
       }}
     >
-      <h2>People&apos;s Locations (Real-Time Update)</h2>
+      <Typography>People&apos;s Locations (Real-Time Update)</Typography>
 
       <MapContainer
         center={[40.785091, -73.968285]}
@@ -118,7 +121,7 @@ const MapDashboard = () => {
 
         <FitMapBounds />
       </MapContainer>
-    </div>
+    </Box>
   );
 };
 

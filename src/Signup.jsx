@@ -3,6 +3,23 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import SubscriptionCards from "./SubscriptionCard";
 import { toast } from "react-toastify";
+import {
+  TextField,
+  Button,
+  CircularProgress,
+  Box,
+  Typography,
+} from "@mui/material";
+import { styled } from "@mui/system";
+
+const GradientButton = styled(Button)({
+  background: "linear-gradient(to right, #008080, #00bfae)",
+  color: "#fff",
+  textTransform: "none",
+  "&:hover": {
+    background: "linear-gradient(to right, #006f6f, #00a594)",
+  },
+});
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -19,8 +36,6 @@ const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSignupSuccess, setIsSignupSuccess] = useState(false);
   const [userData, setUserData] = useState(null);
-
-  console.log("userData", userData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,7 +88,6 @@ const SignUp = () => {
       );
 
       setUserData(response.data.user);
-      console.log("response", response);
       setIsSignupSuccess(true);
     } catch (error) {
       console.error("Error registering user:", error);
@@ -81,8 +95,8 @@ const SignUp = () => {
       setIsSubmitting(false);
     }
   };
+
   const handleSubscriptionSelect = async (subscriptionType) => {
-    console.log("working -------------");
     const userId = userData.id;
     try {
       const response = await axios.post(
@@ -98,90 +112,123 @@ const SignUp = () => {
   };
 
   return (
-    <div className="form-container">
-      <h1>Sign Up</h1>
-      {!isSignupSuccess ? (
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>Profile Image</label>
-            <div
-              onClick={() => document.getElementById("fileInput").click()}
-              style={{
-                cursor: "pointer",
-                width: "100px",
-                height: "100px",
-                borderRadius: "50%",
-                backgroundColor: "#f0f0f0",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                overflow: "hidden",
-                margin: "auto",
-              }}
-            >
-              <img
-                src={imagePreview}
-                alt="Avatar Preview"
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 4,
+        margin: "auto",
+      }}
+    >
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: 500,
+          background: "white",
+          padding: 3,
+          borderRadius: 2,
+          boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Typography variant="h4" align="center" gutterBottom>
+          Sign Up
+        </Typography>
+        {!isSignupSuccess ? (
+          <form onSubmit={handleSubmit}>
+            <Box display="flex" justifyContent="center" mb={2}>
+              <div
+                onClick={() => document.getElementById("fileInput").click()}
                 style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
+                  cursor: "pointer",
+                  width: "100px",
+                  height: "100px",
+                  borderRadius: "50%",
+                  backgroundColor: "#f0f0f0",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  overflow: "hidden",
+                  margin: "auto",
                 }}
+              >
+                <img
+                  src={imagePreview}
+                  alt="Avatar Preview"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
+              <input
+                type="file"
+                id="fileInput"
+                name="image"
+                onChange={handleFileChange}
+                accept="image/*"
+                style={{ display: "none" }}
               />
-            </div>
-            <input
-              type="file"
-              id="fileInput"
-              name="image"
-              onChange={handleFileChange}
-              accept="image/*"
-              style={{ display: "none" }}
-            />
-          </div>
-          <div>
-            <label>Username</label>
-            <input
-              type="text"
+            </Box>
+            <TextField
+              fullWidth
+              label="Username"
               name="username"
               value={formData.username}
               onChange={handleChange}
               required
+              margin="normal"
+              variant="outlined"
             />
-          </div>
-          <div>
-            <label>Email</label>
-            <input
+            <TextField
+              fullWidth
+              label="Email"
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               required
+              margin="normal"
+              variant="outlined"
             />
-          </div>
-          <div>
-            <label>Password</label>
-            <input
+            <TextField
+              fullWidth
+              label="Password"
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               required
+              margin="normal"
+              variant="outlined"
             />
-          </div>
-
-          <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Sign Up"}
-          </button>
-          <p style={{ textAlign: "center", marginTop: 10 }}>
-            Already have an account? <Link to="/login">Login</Link>
-          </p>
-        </form>
-      ) : (
-        <div>
-          <SubscriptionCards onSelectSubscription={handleSubscriptionSelect} />
-        </div>
-      )}
-    </div>
+            <GradientButton
+              fullWidth
+              type="submit"
+              disabled={isSubmitting}
+              sx={{ mt: 2 }}
+            >
+              {isSubmitting ? (
+                <CircularProgress size={24} sx={{ color: "#fff" }} />
+              ) : (
+                "Sign Up"
+              )}
+            </GradientButton>
+            <p style={{ textAlign: "center", marginTop: 10 }}>
+              Already have an account? <Link to="/login">Login</Link>
+            </p>
+          </form>
+        ) : (
+          <Box>
+            <SubscriptionCards
+              onSelectSubscription={handleSubscriptionSelect}
+            />
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 };
 

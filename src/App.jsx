@@ -39,7 +39,10 @@ const App = () => {
       <Route path="/subscription" element={<Subscription />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/otp" element={<OtpScreen />} />
-      <Route path="/user-profile" element={<UserProfileContainer />} />
+      <Route
+        path="/user-profile"
+        element={<UserProfileContainer onLogout={handleLogout} />}
+      />
     </Routes>
   );
 };

@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import UserProfile from "./UserProfile";
 
-const Sidebar = ({ user }) => {
+const Sidebar = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState("UserProfile");
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -128,6 +128,7 @@ const Sidebar = ({ user }) => {
           </ListItem>
           <ListItem disablePadding>
             <ListItemButton
+              onClick={onLogout}
               sx={{
                 "&:hover": {
                   background: "linear-gradient(90deg, #d32f2f, #f44336)",

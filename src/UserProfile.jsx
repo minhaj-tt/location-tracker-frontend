@@ -15,12 +15,13 @@ const UserProfile = ({ user, darkMode }) => {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  console.log("darkMode", darkMode);
-
   const [formData, setFormData] = useState({
     username: userData.username,
     email: userData.email,
     image: userData.image,
+    dateOfBirth: userData.dateOfBirth || "02/02/2000",
+    address: userData.address || "Punjab Cooperative Housing Society",
+    phoneNumber: userData.phoneNumber || "+92 336 4804220",
   });
 
   const handleChange = (e) => {
@@ -78,7 +79,7 @@ const UserProfile = ({ user, darkMode }) => {
                   : "1px 1px 2px rgba(0, 0, 0, 0.2)",
               }}
             >
-              Profile
+              User Profile
             </Typography>
 
             <Avatar
@@ -95,34 +96,50 @@ const UserProfile = ({ user, darkMode }) => {
             />
 
             <Box sx={{ width: "100%", textAlign: "left" }}>
-              <Typography
-                variant="subtitle1"
-                fontWeight="bold"
-                color={darkMode ? "text.secondary" : "text.secondary"}
-              >
-                Username:
-              </Typography>
-              <Typography
-                variant="body1"
-                color={darkMode ? "white" : "text.primary"}
-                sx={{ marginBottom: 2 }}
-              >
-                {userData.username}
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography fontWeight="bold" sx={{ fontSize: "1.2rem" }}>
+                  Username:
+                </Typography>
+                <Typography sx={{ fontSize: "1.2rem" }}>
+                  {userData.username}
+                </Typography>
+              </Box>
 
-              <Typography
-                variant="subtitle1"
-                fontWeight="bold"
-                color={darkMode ? "text.secondary" : "text.secondary"}
-              >
-                Email:
-              </Typography>
-              <Typography
-                variant="body1"
-                color={darkMode ? "white" : "text.primary"}
-              >
-                {userData.email}
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography fontWeight="bold" sx={{ fontSize: "1.2rem" }}>
+                  Email:
+                </Typography>
+                <Typography sx={{ fontSize: "1.2rem" }}>
+                  {userData.email}
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography fontWeight="bold" sx={{ fontSize: "1.2rem" }}>
+                  Date of Birth:
+                </Typography>
+                <Typography sx={{ fontSize: "1.2rem" }}>
+                  {" "}
+                  02/02/2000{" "}
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography fontWeight="bold" sx={{ fontSize: "1.2rem" }}>
+                  Address:
+                </Typography>
+                <Typography sx={{ fontSize: "1.2rem" }}>
+                  Punjab Cooperative Housing Society
+                </Typography>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography fontWeight="bold" sx={{ fontSize: "1.2rem" }}>
+                  Phone Number:
+                </Typography>
+                <Typography sx={{ fontSize: "1.2rem" }}>
+                  +92 336 4804220
+                </Typography>
+              </Box>
             </Box>
 
             <Grid container spacing={3}>
@@ -135,18 +152,6 @@ const UserProfile = ({ user, darkMode }) => {
                     borderRadius: 3,
                     fontWeight: "bold",
                     padding: "10px 20px",
-                    background: darkMode
-                      ? "linear-gradient(90deg, #1976d2, #42a5f5)"
-                      : "linear-gradient(90deg, #1976d2, #42a5f5)",
-                    boxShadow: darkMode
-                      ? "0px 3px 6px rgba(255, 255, 255, 0.16)"
-                      : "0px 3px 6px rgba(0, 0, 0, 0.16)",
-                    textTransform: "none",
-                    "&:hover": {
-                      background: darkMode
-                        ? "linear-gradient(90deg, #1565c0, #1e88e5)"
-                        : "linear-gradient(90deg, #1565c0, #1e88e5)",
-                    },
                   }}
                 >
                   Edit Profile
@@ -165,12 +170,12 @@ const UserProfile = ({ user, darkMode }) => {
             <Typography
               variant="h5"
               fontWeight="bold"
-              color={darkMode ? "white" : "primary"}
               sx={{ textAlign: "center", marginBottom: 2 }}
             >
               Edit Profile
             </Typography>
 
+            {/* Adding new fields */}
             <TextField
               label="Profile Image URL"
               name="image"
@@ -178,16 +183,7 @@ const UserProfile = ({ user, darkMode }) => {
               onChange={handleChange}
               fullWidth
               variant="outlined"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 3,
-                },
-                input: {
-                  color: darkMode ? "white" : "black", // input text color
-                },
-              }}
             />
-
             <TextField
               label="Username"
               name="username"
@@ -195,16 +191,7 @@ const UserProfile = ({ user, darkMode }) => {
               onChange={handleChange}
               fullWidth
               variant="outlined"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 3,
-                },
-                input: {
-                  color: darkMode ? "white" : "black",
-                },
-              }}
             />
-
             <TextField
               label="Email"
               name="email"
@@ -212,15 +199,34 @@ const UserProfile = ({ user, darkMode }) => {
               onChange={handleChange}
               fullWidth
               variant="outlined"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 3,
-                },
-                input: {
-                  color: darkMode ? "white" : "black",
-                },
-              }}
+              disabled
             />
+            {/* <TextField
+              label="Date of Birth"
+              name="dateOfBirth"
+              type="date"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              variant="outlined"
+            /> */}
+            {/* <TextField
+              label="Address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              label="Phone Number"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+            /> */}
 
             <Grid container spacing={3}>
               <Grid item xs={6}>

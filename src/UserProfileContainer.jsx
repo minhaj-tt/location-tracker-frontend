@@ -1,7 +1,8 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import Sidebar from "./ProfileSidebar";
 
-const UserProfileContainer = () => {
+const UserProfileContainer = ({ onLogout }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -23,7 +24,7 @@ const UserProfileContainer = () => {
     return <div>Loading...</div>;
   }
 
-  return <Sidebar user={user} />;
+  return <Sidebar user={user} onLogout={onLogout} />;
 };
 
 export default UserProfileContainer;
