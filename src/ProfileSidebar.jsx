@@ -9,7 +9,6 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Paper,
   Switch,
 } from "@mui/material";
 import UserProfile from "./UserProfile";
@@ -146,34 +145,24 @@ const Sidebar = ({ user, onLogout }) => {
       <Box
         sx={{
           flexGrow: 1,
-          p: 3,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          pl: 4,
+          pr: 4,
         }}
       >
         {activeTab === "UserProfile" && (
           <UserProfile user={user} darkMode={darkMode} />
         )}
         {activeTab === "Settings" && (
-          <Paper
-            elevation={5}
+          <Box
             sx={{
               maxWidth: 500,
               width: 600,
               padding: 4,
-              borderRadius: 4,
-              backgroundColor: darkMode
-                ? "#333333"
-                : "linear-gradient(145deg, #ffffff, #f0f0f0)",
-              boxShadow: darkMode
-                ? "10px 10px 20px rgba(0, 0, 0, 0.5), -10px -10px 20px rgba(0, 0, 0, 0.3)"
-                : "10px 10px 20px #d9d9d9, -10px -10px 20px #ffffff",
               margin: "0 auto",
             }}
           >
             <Typography
-              variant="h5"
+              variant="h4"
               fontWeight="bold"
               color="primary"
               sx={{ textAlign: "center", mb: 3 }}
@@ -181,7 +170,6 @@ const Sidebar = ({ user, onLogout }) => {
               Settings
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              {/* Notifications Switch */}
               <Box
                 sx={{
                   display: "flex",
@@ -204,14 +192,14 @@ const Sidebar = ({ user, onLogout }) => {
                   sx={{
                     "& .MuiSwitch-switchBase": {
                       "&.Mui-checked": {
-                        color: "#4caf50", // Active thumb color
+                        color: "#4caf50",
                         "& + .MuiSwitch-track": {
-                          backgroundColor: "#4caf50", // Active track color
+                          backgroundColor: "#4caf50",
                         },
                       },
                     },
                     "& .MuiSwitch-track": {
-                      backgroundColor: "#e0e0e0", // Default track color
+                      backgroundColor: "#e0e0e0",
                       borderRadius: 20,
                     },
                     "& .MuiSwitch-thumb": {
@@ -296,7 +284,7 @@ const Sidebar = ({ user, onLogout }) => {
                 />
               </Box>
             </Box>
-          </Paper>
+          </Box>
         )}
       </Box>
     </Box>
