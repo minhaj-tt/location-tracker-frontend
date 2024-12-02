@@ -60,6 +60,9 @@ const UpdatePasswordModal = ({ open, onClose, userId, darkMode }) => {
 
       if (response.status === 200) {
         toast.success("Password updated successfully!");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
         onClose();
       }
     } catch (error) {
@@ -152,13 +155,10 @@ const UpdatePasswordModal = ({ open, onClose, userId, darkMode }) => {
                 borderRadius: 3,
                 fontWeight: "bold",
                 padding: "10px 20px",
-                background: darkMode
-                  ? "linear-gradient(90deg, #43a047, #66bb6a)"
-                  : "linear-gradient(90deg, #43a047, #66bb6a)",
+                background: "linear-gradient(90deg, #008080, #004d40)",
+                color: "white",
                 "&:hover": {
-                  background: darkMode
-                    ? "linear-gradient(90deg, #2e7d32, #388e3c)"
-                    : "linear-gradient(90deg, #2e7d32, #388e3c)",
+                  background: "linear-gradient(90deg, #004d40, #008080)",
                 },
               }}
             >

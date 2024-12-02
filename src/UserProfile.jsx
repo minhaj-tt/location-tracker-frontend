@@ -118,7 +118,7 @@ const UserProfile = ({ user, darkMode, setUser }) => {
           <Typography
             variant="h4"
             fontWeight="bold"
-            color={darkMode ? "white" : "primary"}
+            color={darkMode ? "white" : "#008080"}
             gutterBottom
             sx={{
               textShadow: darkMode
@@ -137,7 +137,7 @@ const UserProfile = ({ user, darkMode, setUser }) => {
             sx={{
               width: 100,
               height: 100,
-              border: darkMode ? "4px solid #1976d2" : "4px solid #1976d2",
+              border: "4px solid #008080",
               boxShadow: darkMode
                 ? "0px 4px 10px rgba(255, 255, 255, 0.2)"
                 : "0px 4px 10px rgba(0, 0, 0, 0.2)",
@@ -146,7 +146,7 @@ const UserProfile = ({ user, darkMode, setUser }) => {
           <Box>
             <Typography
               fontWeight="bold"
-              color={darkMode ? "white" : "primary"}
+              color={darkMode ? "white" : "#008080"}
               sx={{
                 fontSize: 20,
                 display: "flex",
@@ -164,16 +164,16 @@ const UserProfile = ({ user, darkMode, setUser }) => {
                 size="small"
                 sx={{
                   "& .MuiRating-iconFilled": {
-                    color: "green",
+                    color: "#008080",
                   },
                   "& .MuiRating-iconHover": {
-                    color: "green",
+                    color: "#008080",
                   },
                 }}
               />
               <Typography
                 sx={{
-                  color: darkMode ? "white" : "green",
+                  color: darkMode ? "white" : "#008080",
                   fontSize: "0.9rem",
                 }}
               >
@@ -204,7 +204,7 @@ const UserProfile = ({ user, darkMode, setUser }) => {
                 sx={{
                   mt: 1,
                   fontSize: "1.2rem",
-                  color: darkMode ? "white" : "#000000",
+                  color: darkMode ? "white" : "#008080",
                 }}
               >
                 {label}
@@ -223,13 +223,17 @@ const UserProfile = ({ user, darkMode, setUser }) => {
         <Grid container spacing={3}>
           <Grid item xs={6}>
             <Button
-              variant="contained"
               fullWidth
               onClick={() => setIsModalOpen(true)}
               sx={{
                 borderRadius: 3,
                 fontWeight: "bold",
                 padding: "10px 20px",
+                color: "white",
+                background: "linear-gradient(90deg, #008080, #004d40)",
+                "&:hover": {
+                  background: "linear-gradient(90deg, #004d40, #008080)",
+                },
               }}
             >
               Edit Profile
@@ -238,20 +242,17 @@ const UserProfile = ({ user, darkMode, setUser }) => {
 
           <Grid item xs={6}>
             <Button
-              variant="contained"
               fullWidth
               onClick={() => setIsPasswordModalOpen(true)}
               sx={{
                 borderRadius: 3,
+                border: "2px solid #008080 ",
+                color: "#008080",
                 fontWeight: "bold",
                 padding: "10px 20px",
-                background: darkMode
-                  ? "linear-gradient(90deg, #43a047, #66bb6a)"
-                  : "linear-gradient(90deg, #43a047, #66bb6a)",
                 "&:hover": {
-                  background: darkMode
-                    ? "linear-gradient(90deg, #2e7d32, #388e3c)"
-                    : "linear-gradient(90deg, #2e7d32, #388e3c)",
+                  backgroundColor: "#004d40",
+                  color: "white",
                 },
               }}
             >
@@ -412,13 +413,9 @@ const UserProfile = ({ user, darkMode, setUser }) => {
                   borderRadius: 3,
                   fontWeight: "bold",
                   padding: "10px 20px",
-                  background: darkMode
-                    ? "linear-gradient(90deg, #43a047, #66bb6a)"
-                    : "linear-gradient(90deg, #43a047, #66bb6a)",
+                  background: "linear-gradient(90deg, #008080, #004d40)",
                   "&:hover": {
-                    background: darkMode
-                      ? "linear-gradient(90deg, #2e7d32, #388e3c)"
-                      : "linear-gradient(90deg, #2e7d32, #388e3c)",
+                    background: "linear-gradient(90deg, #004d40, #008080)",
                   },
                 }}
               >

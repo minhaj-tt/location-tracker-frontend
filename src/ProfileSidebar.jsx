@@ -41,23 +41,24 @@ const Sidebar = ({ user, onLogout }) => {
         marginTop: -1,
         marginBottom: -1,
         marginRight: -1,
-        backgroundColor: darkMode ? "#121212" : "#ffffff",
+        backgroundColor: darkMode ? "#121212" : "#f4f4f4",
         color: darkMode ? "#ffffff" : "#000000",
       }}
     >
       <Drawer
         variant="permanent"
         sx={{
-          width: 240,
+          width: 280,
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: {
-            width: 240,
+            width: 280,
             boxSizing: "border-box",
-            backgroundColor: darkMode
-              ? "#333333"
-              : "linear-gradient(145deg, #ffffff, #f0f0f0)",
+            background: darkMode
+              ? "linear-gradient(145deg, #333333, #1e1e1e)"
+              : "linear-gradient(145deg, #ffffff, #e6e6e6)",
             color: darkMode ? "#ffffff" : "#000000",
             transition: "background-color 0.3s ease, color 0.3s ease",
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
           },
         }}
       >
@@ -66,75 +67,73 @@ const Sidebar = ({ user, onLogout }) => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            mt: 3,
+            mt: 4,
           }}
         >
           <Avatar
             src={user.image}
             alt={user.username}
             sx={{
-              width: 80,
-              height: 80,
-              border: "3px solid #1976d2",
-              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+              width: 100,
+              height: 100,
+              border: "4px solid #008080",
+              boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.2)",
               mb: 2,
+              transition: "transform 0.3s ease",
+              "&:hover": {
+                transform: "scale(1.1)",
+              },
             }}
           />
-          <Typography variant="h6" color="primary" sx={{ fontWeight: "bold" }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: "bold",
+              color: "#008080",
+              letterSpacing: 1,
+              textShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+            }}
+          >
             {user.username}
           </Typography>
         </Box>
-        <List>
-          <ListItem disablePadding>
-            <ListItemButton
-              onClick={() => handleTabChange("UserProfile")}
-              sx={{
-                background:
-                  activeTab === "UserProfile"
-                    ? "linear-gradient(90deg, #1976d2, #42a5f5)"
-                    : "transparent",
-                color: activeTab === "UserProfile" ? "#fff" : "inherit",
-                "&:hover": {
-                  background: "linear-gradient(90deg, #1565c0, #1e88e5)",
-                  color: "#fff",
-                },
-                borderRadius: 2,
-                margin: 0.5,
-              }}
-            >
-              <ListItemText primary="User Profile" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton
-              onClick={() => handleTabChange("Settings")}
-              sx={{
-                background:
-                  activeTab === "Settings"
-                    ? "linear-gradient(90deg, #1976d2, #42a5f5)"
-                    : "transparent",
-                color: activeTab === "Settings" ? "#fff" : "inherit",
-                "&:hover": {
-                  background: "linear-gradient(90deg, #1565c0, #1e88e5)",
-                  color: "#fff",
-                },
-                borderRadius: 2,
-                margin: 0.5,
-              }}
-            >
-              <ListItemText primary="Settings" />
-            </ListItemButton>
-          </ListItem>
+        <List sx={{ mt: 3 }}>
+          {["UserProfile", "Settings"].map((tab, index) => (
+            <ListItem key={index} disablePadding>
+              <ListItemButton
+                onClick={() => handleTabChange(tab)}
+                sx={{
+                  background:
+                    activeTab === tab
+                      ? "linear-gradient(90deg, #008080, #004d40)"
+                      : "transparent",
+                  color: activeTab === tab ? "#ffffff" : "inherit",
+                  "&:hover": {
+                    background: "linear-gradient(90deg, #004d40, #008080)",
+                    color: "#ffffff",
+                  },
+                  borderRadius: 3,
+                  margin: 0.5,
+                  transition: "all 0.3s ease",
+                }}
+              >
+                <ListItemText
+                  primary={tab === "UserProfile" ? "User Profile" : "Settings"}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
           <ListItem disablePadding>
             <ListItemButton
               onClick={onLogout}
               sx={{
                 "&:hover": {
                   background: "linear-gradient(90deg, #d32f2f, #f44336)",
-                  color: "#fff",
+                  color: "#ffffff",
                 },
-                borderRadius: 2,
+                borderRadius: 3,
                 margin: 0.5,
+                transition: "all 0.3s ease",
               }}
             >
               <ListItemText primary="Logout" />
@@ -145,8 +144,7 @@ const Sidebar = ({ user, onLogout }) => {
       <Box
         sx={{
           flexGrow: 1,
-          pl: 4,
-          pr: 4,
+          p: 4,
         }}
       >
         {activeTab === "UserProfile" && (
@@ -155,32 +153,53 @@ const Sidebar = ({ user, onLogout }) => {
         {activeTab === "Settings" && (
           <Box
             sx={{
-              maxWidth: 500,
-              width: 600,
-              padding: 4,
-              margin: "0 auto",
+              maxWidth: 600,
+              width: "100%",
+              p: 5,
+              mx: "auto",
+              bgcolor: darkMode ? "#2C2C2C" : "#F9F9F9",
+              boxShadow: darkMode
+                ? "0px 6px 30px rgba(0, 0, 0, 0.4)"
+                : "0px 6px 30px rgba(0, 0, 0, 0.1)",
+              borderRadius: 4,
+              transition: "all 0.3s ease-in-out",
             }}
           >
             <Typography
               variant="h4"
               fontWeight="bold"
               color="primary"
-              sx={{ textAlign: "center", mb: 3 }}
+              sx={{
+                textAlign: "center",
+                mb: 4,
+                letterSpacing: 1.5,
+                textShadow: darkMode
+                  ? "0px 3px 6px rgba(255, 255, 255, 0.1)"
+                  : "0px 3px 6px rgba(0, 0, 0, 0.2)",
+              }}
             >
               Settings
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              {/* Notification Setting */}
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
+                  p: 2,
+                  bgcolor: darkMode ? "#1F1F1F" : "#FFFFFF",
+                  borderRadius: 2,
+                  boxShadow: darkMode
+                    ? "0px 2px 6px rgba(0, 0, 0, 0.5)"
+                    : "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                  transition: "background-color 0.3s ease",
                 }}
               >
                 <Typography
                   variant="body1"
                   fontWeight="medium"
-                  sx={{ color: darkMode ? "#ffffff" : "#000000" }}
+                  sx={{ color: darkMode ? "#FFFFFF" : "#333333" }}
                 >
                   Enable Notifications
                 </Typography>
@@ -190,20 +209,10 @@ const Sidebar = ({ user, onLogout }) => {
                     setNotificationsEnabled(!notificationsEnabled)
                   }
                   sx={{
-                    "& .MuiSwitch-switchBase": {
-                      "&.Mui-checked": {
-                        color: "#4caf50",
-                        "& + .MuiSwitch-track": {
-                          backgroundColor: "#4caf50",
-                        },
-                      },
-                    },
-                    "& .MuiSwitch-track": {
-                      backgroundColor: "#e0e0e0",
-                      borderRadius: 20,
-                    },
                     "& .MuiSwitch-thumb": {
-                      boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+                      boxShadow: darkMode
+                        ? "0px 3px 6px rgba(255, 255, 255, 0.3)"
+                        : "0px 3px 6px rgba(0, 0, 0, 0.3)",
                     },
                   }}
                 />
@@ -214,12 +223,19 @@ const Sidebar = ({ user, onLogout }) => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
+                  p: 2,
+                  bgcolor: darkMode ? "#1F1F1F" : "#FFFFFF",
+                  borderRadius: 2,
+                  boxShadow: darkMode
+                    ? "0px 2px 6px rgba(0, 0, 0, 0.5)"
+                    : "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                  transition: "background-color 0.3s ease",
                 }}
               >
                 <Typography
                   variant="body1"
                   fontWeight="medium"
-                  sx={{ color: darkMode ? "#ffffff" : "#000000" }}
+                  sx={{ color: darkMode ? "#FFFFFF" : "#333333" }}
                 >
                   Dark Mode
                 </Typography>
@@ -227,37 +243,34 @@ const Sidebar = ({ user, onLogout }) => {
                   checked={darkMode}
                   onChange={handleDarkModeChange}
                   sx={{
-                    "& .MuiSwitch-switchBase": {
-                      "&.Mui-checked": {
-                        color: "#673ab7", // Active thumb color
-                        "& + .MuiSwitch-track": {
-                          backgroundColor: "#673ab7", // Active track color
-                        },
-                      },
-                    },
-                    "& .MuiSwitch-track": {
-                      backgroundColor: "#e0e0e0", // Default track color
-                      borderRadius: 20,
-                    },
                     "& .MuiSwitch-thumb": {
-                      boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+                      boxShadow: darkMode
+                        ? "0px 3px 6px rgba(255, 255, 255, 0.3)"
+                        : "0px 3px 6px rgba(0, 0, 0, 0.3)",
                     },
                   }}
                 />
               </Box>
 
-              {/* Sound Effects Switch */}
+              {/* Sound Effects Setting */}
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
+                  p: 2,
+                  bgcolor: darkMode ? "#1F1F1F" : "#FFFFFF",
+                  borderRadius: 2,
+                  boxShadow: darkMode
+                    ? "0px 2px 6px rgba(0, 0, 0, 0.5)"
+                    : "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                  transition: "background-color 0.3s ease",
                 }}
               >
                 <Typography
                   variant="body1"
                   fontWeight="medium"
-                  sx={{ color: darkMode ? "#ffffff" : "#000000" }}
+                  sx={{ color: darkMode ? "#FFFFFF" : "#333333" }}
                 >
                   Sound Effects
                 </Typography>
@@ -265,20 +278,10 @@ const Sidebar = ({ user, onLogout }) => {
                   checked={soundEffects}
                   onChange={() => setSoundEffects(!soundEffects)}
                   sx={{
-                    "& .MuiSwitch-switchBase": {
-                      "&.Mui-checked": {
-                        color: "#f44336", // Active thumb color
-                        "& + .MuiSwitch-track": {
-                          backgroundColor: "#f44336", // Active track color
-                        },
-                      },
-                    },
-                    "& .MuiSwitch-track": {
-                      backgroundColor: "#e0e0e0", // Default track color
-                      borderRadius: 20,
-                    },
                     "& .MuiSwitch-thumb": {
-                      boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+                      boxShadow: darkMode
+                        ? "0px 3px 6px rgba(255, 255, 255, 0.3)"
+                        : "0px 3px 6px rgba(0, 0, 0, 0.3)",
                     },
                   }}
                 />

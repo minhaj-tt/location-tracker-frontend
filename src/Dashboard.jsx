@@ -70,10 +70,10 @@ const Dashboard = ({ onLogout }) => {
             variant="contained"
             sx={{
               width: "350px",
-              background: "linear-gradient(90deg, #008080, #004d40)",
               color: "white",
               fontWeight: "bold",
               padding: "10px 20px",
+              background: "linear-gradient(90deg, #008080, #004d40)",
               "&:hover": {
                 background: "linear-gradient(90deg, #004d40, #008080)",
               },
