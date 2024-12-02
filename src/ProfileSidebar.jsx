@@ -10,6 +10,9 @@ import {
   ListItemButton,
   ListItemText,
   Switch,
+  Grid,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import UserProfile from "./UserProfile";
 
@@ -17,7 +20,9 @@ const Sidebar = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState("UserProfile");
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [soundEffects, setSoundEffects] = useState(false);
+  const [privacyMode, setPrivacyMode] = useState(false);
+  const [dataSaverMode, setDataSaverMode] = useState(false);
+  const [language, setLanguage] = useState("en");
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -32,6 +37,11 @@ const Sidebar = ({ user, onLogout }) => {
     setDarkMode(!darkMode);
     localStorage.setItem("darkMode", !darkMode);
   };
+
+  // Handlers
+  const handlePrivacyModeChange = () => setPrivacyMode((prev) => !prev);
+  const handleDataSaverModeChange = () => setDataSaverMode((prev) => !prev);
+  const handleLanguageChange = (event) => setLanguage(event.target.value);
 
   return (
     <Box
@@ -59,6 +69,9 @@ const Sidebar = ({ user, onLogout }) => {
             color: darkMode ? "#ffffff" : "#000000",
             transition: "background-color 0.3s ease, color 0.3s ease",
             boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
           },
         }}
       >
@@ -107,14 +120,19 @@ const Sidebar = ({ user, onLogout }) => {
                     activeTab === tab
                       ? "linear-gradient(90deg, #008080, #004d40)"
                       : "transparent",
-                  color: activeTab === tab ? "#ffffff" : "inherit",
+                  color: activeTab === tab ? "#ffffff" : "#004d40",
                   "&:hover": {
-                    background: "linear-gradient(90deg, #004d40, #008080)",
-                    color: "#ffffff",
+                    background:
+                      activeTab === tab
+                        ? "linear-gradient(90deg, #004d40, #008080)"
+                        : "#f0f0f0",
+                    color: activeTab === tab ? "#ffffff" : "#004d40",
                   },
                   borderRadius: 3,
                   margin: 0.5,
+                  border: activeTab === tab ? "none" : "1px solid #008080",
                   transition: "all 0.3s ease",
+                  opacity: activeTab === tab ? 1 : 0.8,
                 }}
               >
                 <ListItemText
@@ -123,24 +141,31 @@ const Sidebar = ({ user, onLogout }) => {
               </ListItemButton>
             </ListItem>
           ))}
+        </List>
+        <Box sx={{ mt: "auto", mb: 2 }}>
           <ListItem disablePadding>
             <ListItemButton
               onClick={onLogout}
               sx={{
+                background: "transparent",
+                color: "red",
                 "&:hover": {
                   background: "linear-gradient(90deg, #d32f2f, #f44336)",
                   color: "#ffffff",
                 },
+                border: "1px solid red",
                 borderRadius: 3,
                 margin: 0.5,
                 transition: "all 0.3s ease",
+                opacity: 0.8,
               }}
             >
               <ListItemText primary="Logout" />
             </ListItemButton>
           </ListItem>
-        </List>
+        </Box>
       </Drawer>
+
       <Box
         sx={{
           flexGrow: 1,
@@ -153,8 +178,7 @@ const Sidebar = ({ user, onLogout }) => {
         {activeTab === "Settings" && (
           <Box
             sx={{
-              maxWidth: 600,
-              width: "100%",
+              maxWidth: "100%",
               p: 5,
               mx: "auto",
               bgcolor: darkMode ? "#2C2C2C" : "#F9F9F9",
@@ -168,125 +192,184 @@ const Sidebar = ({ user, onLogout }) => {
             <Typography
               variant="h4"
               fontWeight="bold"
-              color="primary"
+              color={darkMode ? "white" : "#008080"}
+              gutterBottom
               sx={{
                 textAlign: "center",
-                mb: 4,
-                letterSpacing: 1.5,
                 textShadow: darkMode
-                  ? "0px 3px 6px rgba(255, 255, 255, 0.1)"
-                  : "0px 3px 6px rgba(0, 0, 0, 0.2)",
+                  ? "1px 1px 2px rgba(0, 0, 0, 0.4)"
+                  : "1px 1px 2px rgba(0, 0, 0, 0.2)",
               }}
             >
               Settings
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              {/* Notification Setting */}
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  p: 2,
-                  bgcolor: darkMode ? "#1F1F1F" : "#FFFFFF",
-                  borderRadius: 2,
-                  boxShadow: darkMode
-                    ? "0px 2px 6px rgba(0, 0, 0, 0.5)"
-                    : "0px 2px 6px rgba(0, 0, 0, 0.1)",
-                  transition: "background-color 0.3s ease",
-                }}
-              >
-                <Typography
-                  variant="body1"
-                  fontWeight="medium"
-                  sx={{ color: darkMode ? "#FFFFFF" : "#333333" }}
-                >
-                  Enable Notifications
-                </Typography>
-                <Switch
-                  checked={notificationsEnabled}
-                  onChange={() =>
-                    setNotificationsEnabled(!notificationsEnabled)
-                  }
+            <Grid container spacing={4} mt={1}>
+              {/* Existing Settings */}
+              <Grid item xs={12} sm={6}>
+                <Box
                   sx={{
-                    "& .MuiSwitch-thumb": {
-                      boxShadow: darkMode
-                        ? "0px 3px 6px rgba(255, 255, 255, 0.3)"
-                        : "0px 3px 6px rgba(0, 0, 0, 0.3)",
-                    },
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    p: 2,
+                    bgcolor: darkMode ? "#1F1F1F" : "#FFFFFF",
+                    borderRadius: 2,
+                    boxShadow: darkMode
+                      ? "0px 2px 6px rgba(0, 0, 0, 0.5)"
+                      : "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                    transition: "background-color 0.3s ease",
                   }}
-                />
-              </Box>
+                >
+                  <Typography
+                    variant="body1"
+                    fontWeight="medium"
+                    sx={{ color: darkMode ? "#FFFFFF" : "#333333" }}
+                  >
+                    Enable Notifications
+                  </Typography>
+                  <Switch
+                    checked={notificationsEnabled}
+                    onChange={() =>
+                      setNotificationsEnabled(!notificationsEnabled)
+                    }
+                    sx={{
+                      "& .MuiSwitch-thumb": {
+                        boxShadow: darkMode
+                          ? "0px 3px 6px rgba(255, 255, 255, 0.3)"
+                          : "0px 3px 6px rgba(0, 0, 0, 0.3)",
+                      },
+                    }}
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    p: 2,
+                    bgcolor: darkMode ? "#1F1F1F" : "#FFFFFF",
+                    borderRadius: 2,
+                    boxShadow: darkMode
+                      ? "0px 2px 6px rgba(0, 0, 0, 0.5)"
+                      : "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                    transition: "background-color 0.3s ease",
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    fontWeight="medium"
+                    sx={{ color: darkMode ? "#FFFFFF" : "#333333" }}
+                  >
+                    Enable Dark Mode
+                  </Typography>
+                  <Switch
+                    checked={darkMode}
+                    onChange={handleDarkModeChange}
+                    sx={{
+                      "& .MuiSwitch-thumb": {
+                        boxShadow: darkMode
+                          ? "0px 3px 6px rgba(255, 255, 255, 0.3)"
+                          : "0px 3px 6px rgba(0, 0, 0, 0.3)",
+                      },
+                    }}
+                  />
+                </Box>
+              </Grid>
 
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  p: 2,
-                  bgcolor: darkMode ? "#1F1F1F" : "#FFFFFF",
-                  borderRadius: 2,
-                  boxShadow: darkMode
-                    ? "0px 2px 6px rgba(0, 0, 0, 0.5)"
-                    : "0px 2px 6px rgba(0, 0, 0, 0.1)",
-                  transition: "background-color 0.3s ease",
-                }}
-              >
-                <Typography
-                  variant="body1"
-                  fontWeight="medium"
-                  sx={{ color: darkMode ? "#FFFFFF" : "#333333" }}
-                >
-                  Dark Mode
-                </Typography>
-                <Switch
-                  checked={darkMode}
-                  onChange={handleDarkModeChange}
+              {/* New Settings */}
+              <Grid item xs={12} sm={6}>
+                <Box
                   sx={{
-                    "& .MuiSwitch-thumb": {
-                      boxShadow: darkMode
-                        ? "0px 3px 6px rgba(255, 255, 255, 0.3)"
-                        : "0px 3px 6px rgba(0, 0, 0, 0.3)",
-                    },
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    p: 2,
+                    bgcolor: darkMode ? "#1F1F1F" : "#FFFFFF",
+                    borderRadius: 2,
+                    boxShadow: darkMode
+                      ? "0px 2px 6px rgba(0, 0, 0, 0.5)"
+                      : "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                    transition: "background-color 0.3s ease",
                   }}
-                />
-              </Box>
-
-              {/* Sound Effects Setting */}
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  p: 2,
-                  bgcolor: darkMode ? "#1F1F1F" : "#FFFFFF",
-                  borderRadius: 2,
-                  boxShadow: darkMode
-                    ? "0px 2px 6px rgba(0, 0, 0, 0.5)"
-                    : "0px 2px 6px rgba(0, 0, 0, 0.1)",
-                  transition: "background-color 0.3s ease",
-                }}
-              >
-                <Typography
-                  variant="body1"
-                  fontWeight="medium"
-                  sx={{ color: darkMode ? "#FFFFFF" : "#333333" }}
                 >
-                  Sound Effects
-                </Typography>
-                <Switch
-                  checked={soundEffects}
-                  onChange={() => setSoundEffects(!soundEffects)}
+                  <Typography
+                    variant="body1"
+                    fontWeight="medium"
+                    sx={{ color: darkMode ? "#FFFFFF" : "#333333" }}
+                  >
+                    Privacy Mode
+                  </Typography>
+                  <Switch
+                    checked={privacyMode}
+                    onChange={handlePrivacyModeChange}
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Box
                   sx={{
-                    "& .MuiSwitch-thumb": {
-                      boxShadow: darkMode
-                        ? "0px 3px 6px rgba(255, 255, 255, 0.3)"
-                        : "0px 3px 6px rgba(0, 0, 0, 0.3)",
-                    },
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    p: 2,
+                    bgcolor: darkMode ? "#1F1F1F" : "#FFFFFF",
+                    borderRadius: 2,
+                    boxShadow: darkMode
+                      ? "0px 2px 6px rgba(0, 0, 0, 0.5)"
+                      : "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                    transition: "background-color 0.3s ease",
                   }}
-                />
-              </Box>
-            </Box>
+                >
+                  <Typography
+                    variant="body1"
+                    fontWeight="medium"
+                    sx={{ color: darkMode ? "#FFFFFF" : "#333333" }}
+                  >
+                    Data Saver Mode
+                  </Typography>
+                  <Switch
+                    checked={dataSaverMode}
+                    onChange={handleDataSaverModeChange}
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={12}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    p: 2,
+                    bgcolor: darkMode ? "#1F1F1F" : "#FFFFFF",
+                    borderRadius: 2,
+                    boxShadow: darkMode
+                      ? "0px 2px 6px rgba(0, 0, 0, 0.5)"
+                      : "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    fontWeight="medium"
+                    sx={{ color: darkMode ? "#FFFFFF" : "#333333" }}
+                  >
+                    Language
+                  </Typography>
+                  <Select
+                    value={language}
+                    onChange={handleLanguageChange}
+                    sx={{
+                      color: darkMode ? "#ffffff" : "#000000",
+                    }}
+                  >
+                    <MenuItem value="en">English</MenuItem>
+                    <MenuItem value="es">Spanish</MenuItem>
+                    <MenuItem value="fr">French</MenuItem>
+                  </Select>
+                </Box>
+              </Grid>
+            </Grid>
           </Box>
         )}
       </Box>

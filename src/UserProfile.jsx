@@ -230,6 +230,7 @@ const UserProfile = ({ user, darkMode, setUser }) => {
                 fontWeight: "bold",
                 padding: "10px 20px",
                 color: "white",
+                border: "1px solid #008080 ",
                 background: "linear-gradient(90deg, #008080, #004d40)",
                 "&:hover": {
                   background: "linear-gradient(90deg, #004d40, #008080)",
@@ -246,7 +247,7 @@ const UserProfile = ({ user, darkMode, setUser }) => {
               onClick={() => setIsPasswordModalOpen(true)}
               sx={{
                 borderRadius: 3,
-                border: "2px solid #008080 ",
+                border: "1px solid #008080 ",
                 color: "#008080",
                 fontWeight: "bold",
                 padding: "10px 20px",

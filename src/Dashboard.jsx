@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Box, Button, Typography, Paper } from "@mui/material";
 import TrialExpiredModal from "../trialExpiredModal";
 import MapDashboard from "./Maps";
+import ChatBot from "./Chatbot";
 
 const Dashboard = ({ onLogout }) => {
   const [isTrialExpired, setIsTrialExpired] = useState(false);
@@ -21,6 +22,13 @@ const Dashboard = ({ onLogout }) => {
 
   const handleUpgrade = () => {
     console.log("Navigating to the subscription page...");
+  };
+
+  const themeColors = {
+    primary: "#008080",
+    secondary: "#004d40",
+    primaryHover: "#004d40",
+    secondaryHover: "#00695c",
   };
 
   return (
@@ -50,7 +58,7 @@ const Dashboard = ({ onLogout }) => {
           fontWeight="bold"
           sx={{
             textAlign: "center",
-            color: "#00695c",
+            color: themeColors.primary,
             marginBottom: 3,
           }}
         >
@@ -73,9 +81,9 @@ const Dashboard = ({ onLogout }) => {
               color: "white",
               fontWeight: "bold",
               padding: "10px 20px",
-              background: "linear-gradient(90deg, #008080, #004d40)",
+              background: themeColors.primary,
               "&:hover": {
-                background: "linear-gradient(90deg, #004d40, #008080)",
+                background: themeColors.primaryHover,
               },
             }}
             onClick={() => navigate("/subscription")}
@@ -87,12 +95,12 @@ const Dashboard = ({ onLogout }) => {
             variant="outlined"
             sx={{
               width: "350px",
-              borderColor: "#008080",
-              color: "#008080",
+              borderColor: themeColors.primary,
+              color: themeColors.primary,
               fontWeight: "bold",
               padding: "10px 20px",
               "&:hover": {
-                backgroundColor: "#004d40",
+                backgroundColor: themeColors.secondary,
                 color: "white",
               },
             }}
@@ -106,6 +114,8 @@ const Dashboard = ({ onLogout }) => {
           <TrialExpiredModal onClose={onLogout} onUpgrade={handleUpgrade} />
         )}
       </Paper>
+
+      <ChatBot themeColors={themeColors} />
     </Box>
   );
 };
