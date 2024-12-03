@@ -16,6 +16,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import "./Calendar.css";
 
 const Calendar = () => {
   const [events, setEvents] = useState([]);
@@ -150,6 +151,40 @@ const Calendar = () => {
             {eventInfo.event.title}
           </Box>
         )}
+        dayHeaderContent={(dayInfo) => (
+          <Typography
+            sx={{
+              fontWeight: "bold",
+              color: "#008080",
+              textAlign: "center",
+              fontSize: "1rem",
+            }}
+          >
+            {dayInfo.text}
+          </Typography>
+        )}
+        views={{
+          timeGridWeek: {
+            slotLabelFormat: {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: false,
+            },
+            slotMinTime: "06:00:00",
+            slotMaxTime: "22:00:00",
+            contentHeight: "auto",
+          },
+          timeGridDay: {
+            slotLabelFormat: {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: false,
+            },
+            slotMinTime: "08:00:00",
+            slotMaxTime: "20:00:00",
+            contentHeight: "auto",
+          },
+        }}
       />
 
       {selectedEvent && (
