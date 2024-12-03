@@ -14,6 +14,7 @@ import axios from "axios";
 import VerifyEmail from "./VerifyEmail";
 import OtpScreen from "./OTP";
 import UserProfileContainer from "./UserProfileContainer";
+import Calendar from "./Calendar";
 
 const App = () => {
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ const App = () => {
         path="/user-profile"
         element={<UserProfileContainer onLogout={handleLogout} />}
       />
+      <Route path="/calendar" element={<Calendar />} />
     </Routes>
   );
 };
