@@ -3,26 +3,34 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/update-password");
+    setLoading(true);
 
-    // try {
-    //   const response = await axios.post(
-    //     "http://localhost:3000/api/auth/forgot-password",
-    //     { email }
-    //   );
-    //   toast.success(response.data.message);
-    //   navigate("/login");
-    // } catch (error) {
-    //   toast.error("Failed to send password reset email. Please try again.");
-    // }
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/reset-password",
+        { email }
+      );
+      console.log("response", response);
+      toast.success(response.data.message);
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -78,8 +86,13 @@ const ForgotPassword = () => {
                 background: "linear-gradient(90deg, #004d40, #008080)",
               },
             }}
+            disabled={loading}
           >
-            Reset Password
+            {loading ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              "Reset Password"
+            )}
           </Button>
         </form>
       </Box>
