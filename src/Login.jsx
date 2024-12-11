@@ -121,17 +121,23 @@ const Login = () => {
             variant="outlined"
           />
 
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Typography sx={{ color: "black", fontSize: "14px" }}>
+              <Link to="/forgot-password">Forgot Password?</Link>
+            </Typography>
+          </Box>
+
           <Button
             variant="contained"
             type="submit"
             fullWidth
             sx={{
-              background: "linear-gradient(90deg, #008080, #004d40)", // Linear gradient for button
+              background: "linear-gradient(90deg, #008080, #004d40)",
               color: "white",
               padding: "12px 0",
               marginTop: 2,
               "&:hover": {
-                background: "linear-gradient(90deg, #004d40, #008080)", // Gradient on hover
+                background: "linear-gradient(90deg, #004d40, #008080)",
               },
             }}
           >

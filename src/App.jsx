@@ -15,6 +15,8 @@ import VerifyEmail from "./VerifyEmail";
 import OtpScreen from "./OTP";
 import UserProfileContainer from "./UserProfileContainer";
 import Calendar from "./Calendar";
+import ForgotPassword from "./ForgotPassword";
+import UpdatePassword from "./UpdatePassword";
 
 const App = () => {
   const navigate = useNavigate();
@@ -45,6 +47,8 @@ const App = () => {
         element={<UserProfileContainer onLogout={handleLogout} />}
       />
       <Route path="/calendar" element={<Calendar />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/update-password" element={<UpdatePassword />} />
     </Routes>
   );
 };
