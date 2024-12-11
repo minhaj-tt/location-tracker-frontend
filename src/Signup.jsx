@@ -227,7 +227,7 @@ const SignUp = () => {
             <TextField
               fullWidth
               label="Phone Number"
-              name="phoneNumber"
+              name="phone_number"
               value={formData.phone_number}
               onChange={handleChange}
               required

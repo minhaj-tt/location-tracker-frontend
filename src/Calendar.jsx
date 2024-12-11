@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import {
   Box,
@@ -14,9 +15,11 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import "./Calendar.css";
+import axios from "axios";
 
 const Calendar = () => {
   const [events, setEvents] = useState([]);
@@ -28,13 +31,42 @@ const Calendar = () => {
     end: "",
     attendees: [],
   });
+  const [users, setUsers] = useState(null);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [eventsFromAPI, setEventsFromAPI] = useState([]);
 
-  const peopleOptions = [
-    "John Doe",
-    "Jane Smith",
-    "Alex Johnson",
-    "Emily Davis",
-  ];
+  const fetchEvents_ = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/auth/events");
+      setEventsFromAPI(response.data.events);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  console.log("eventsfromAPI", eventsFromAPI);
+
+  useEffect(() => {
+    fetchEvents_();
+  }, []);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoadingUsers(true);
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/auth/users"
+        );
+        setUsers(response.data.users);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      } finally {
+        setLoadingUsers(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -49,8 +81,8 @@ const Calendar = () => {
         {
           id: 2,
           title: "Project Deadline",
-          start: "2024-12-07T23:59:00",
-          end: "2024-12-08T00:00:00",
+          start: "2024-12-07T21:59:00",
+          end: "2024-12-07T23:00:00",
           attendees: ["Charlie"],
         },
       ];
@@ -68,18 +100,35 @@ const Calendar = () => {
     setIsDialogOpen(true);
   };
 
-  const handleAddEvent = () => {
+  const handleAddEvent = async () => {
     const eventToAdd = {
-      ...newEvent,
-      id: events.length + 1,
-      extendedProps: {
-        attendees: newEvent.attendees,
-      },
+      title: newEvent.title,
+      start: newEvent.start,
+      end: newEvent.end,
+      attendees: newEvent.attendees
+        .map((attendeeUsername) => {
+          const user = users.find((user) => user.username === attendeeUsername);
+          return user ? user.id : null;
+        })
+        .filter((id) => id !== null),
     };
 
-    setEvents([...events, eventToAdd]);
-    setIsDialogOpen(false);
-    setNewEvent({ title: "", start: "", end: "", attendees: [] });
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/events",
+        eventToAdd
+      );
+
+      if (response.data.success) {
+        setEvents([...events, { ...response.data.event }]);
+        setIsDialogOpen(false);
+        setNewEvent({ title: "", start: "", end: "", attendees: [] });
+      } else {
+        console.error("Failed to create event:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error creating event:", error);
+    }
   };
 
   const handleDeleteEvent = () => {
@@ -114,7 +163,7 @@ const Calendar = () => {
       </Typography>
 
       <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
         initialView="dayGridMonth"
         events={events}
         dateClick={handleDateClick}
@@ -123,10 +172,11 @@ const Calendar = () => {
         selectable={true}
         selectMirror={true}
         dayMaxEvents={true}
+        dayHeaders={true}
         headerToolbar={{
           left: "prev,next today",
           center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay",
+          right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
         }}
         height="80vh"
         buttonText={{
@@ -134,23 +184,8 @@ const Calendar = () => {
           month: "Month",
           week: "Week",
           day: "Day",
+          list: "List",
         }}
-        eventContent={(eventInfo) => (
-          <Box
-            sx={{
-              width: "100%",
-              backgroundColor: "#008080",
-              color: "white",
-              padding: "5px 10px",
-              borderRadius: "5px",
-              textAlign: "center",
-              fontSize: "0.85rem",
-              fontWeight: "bold",
-            }}
-          >
-            {eventInfo.event.title}
-          </Box>
-        )}
         dayHeaderContent={(dayInfo) => (
           <Typography
             sx={{
@@ -163,28 +198,6 @@ const Calendar = () => {
             {dayInfo.text}
           </Typography>
         )}
-        views={{
-          timeGridWeek: {
-            slotLabelFormat: {
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: false,
-            },
-            slotMinTime: "06:00:00",
-            slotMaxTime: "22:00:00",
-            contentHeight: "auto",
-          },
-          timeGridDay: {
-            slotLabelFormat: {
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: false,
-            },
-            slotMinTime: "08:00:00",
-            slotMaxTime: "20:00:00",
-            contentHeight: "auto",
-          },
-        }}
       />
 
       {selectedEvent && (
@@ -329,30 +342,44 @@ const Calendar = () => {
             }}
           />
           <InputLabel sx={{ mb: 1 }}>Invite People</InputLabel>
-          <FormControl fullWidth sx={{ marginBottom: 3 }}>
-            <Select
-              multiple
-              value={newEvent.attendees}
-              onChange={(e) =>
-                setNewEvent({ ...newEvent, attendees: e.target.value })
-              }
-              displayEmpty
+          {loadingUsers ? (
+            <Box
               sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 2,
-                },
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: 60,
               }}
             >
-              <MenuItem value="" disabled>
-                <em>Select People</em>
-              </MenuItem>
-              {peopleOptions.map((person, index) => (
-                <MenuItem key={index} value={person}>
-                  {person}
+              <CircularProgress size={24} />
+            </Box>
+          ) : (
+            <FormControl fullWidth sx={{ marginBottom: 3 }}>
+              <Select
+                multiple
+                value={newEvent.attendees}
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, attendees: e.target.value })
+                }
+                displayEmpty
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                  },
+                }}
+              >
+                <MenuItem value="" disabled>
+                  <em>Select People</em>
                 </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+                {users &&
+                  users.map((person, index) => (
+                    <MenuItem key={index} value={person.username}>
+                      {person.username} ({person.email})
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          )}
           <Button
             variant="contained"
             onClick={handleAddEvent}

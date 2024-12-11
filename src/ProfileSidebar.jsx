@@ -15,6 +15,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import UserProfile from "./UserProfile";
+import Calendar from "./Calendar";
 
 const Sidebar = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState("UserProfile");
@@ -111,7 +112,7 @@ const Sidebar = ({ user, onLogout }) => {
           </Typography>
         </Box>
         <List sx={{ mt: 3 }}>
-          {["UserProfile", "Settings"].map((tab, index) => (
+          {["UserProfile", "Calendar", "Settings"].map((tab, index) => (
             <ListItem key={index} disablePadding>
               <ListItemButton
                 onClick={() => handleTabChange(tab)}
@@ -136,7 +137,13 @@ const Sidebar = ({ user, onLogout }) => {
                 }}
               >
                 <ListItemText
-                  primary={tab === "UserProfile" ? "User Profile" : "Settings"}
+                  primary={
+                    tab === "UserProfile"
+                      ? "User Profile"
+                      : tab === "Calendar"
+                      ? "Calendar"
+                      : "Settings"
+                  }
                 />
               </ListItemButton>
             </ListItem>
@@ -372,6 +379,7 @@ const Sidebar = ({ user, onLogout }) => {
             </Grid>
           </Box>
         )}
+        {activeTab === "Calendar" && <Calendar />}
       </Box>
     </Box>
   );

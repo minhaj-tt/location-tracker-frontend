@@ -26,15 +26,18 @@
   height: 2px !important;
 }
 
-/* Style for header days in week/day view */
-.fc-col-header-cell {
-  background-color: #008080;
-  color: white;
-  font-weight: bold;
-  text-align: center;
-}
-
 /* Style for scrollbars in week/day views */
 .fc-scroller {
   overflow-y: auto !important;
+}
+
+/* Custom yellow dot */
+.fc-daygrid-event-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #f1c40f;
+  display: inline-block;
+  margin-right: 8px;
+  border: 2px solid #f1c40f;
 }
