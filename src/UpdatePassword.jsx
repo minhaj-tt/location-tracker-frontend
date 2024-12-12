@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Box, Button, TextField, Typography } from "@mui/material";
@@ -9,7 +9,22 @@ const UpdatePassword = () => {
     newPassword: "",
     confirmPassword: "",
   });
+  const [token, setToken] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const tokenFromUrl = queryParams.get("token");
+
+    console.log("tokenFromUrl", tokenFromUrl);
+    if (tokenFromUrl) {
+      setToken(tokenFromUrl);
+    } else {
+      toast.error("Invalid or missing token");
+      navigate("/login");
+    }
+  }, [location, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,19 +40,22 @@ const UpdatePassword = () => {
       toast.error("Passwords do not match!");
       return;
     }
-    navigate("/login");
-    // try {
-    //   await axios.put(
-    //     "http://localhost:3000/api/auth/update-password",
-    //     { newPassword: formData.newPassword },
-    //     { withCredentials: true }
-    //   );
-    //   toast.success("Password updated successfully!");
-    //   navigate("/login");
-    // } catch (error) {
-    //   console.error("Password update failed", error);
-    //   toast.error("Failed to update password. Please try again.");
-    // }
+
+    try {
+      await axios.put(
+        "http://localhost:3000/api/auth/update-password",
+        { newPassword: formData.newPassword, token },
+        { withCredentials: true }
+      );
+      toast.success("Password updated successfully!");
+      navigate("/login");
+    } catch (error) {
+      console.error("Password update failed", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to update password. Please try again."
+      );
+    }
   };
 
   return (
