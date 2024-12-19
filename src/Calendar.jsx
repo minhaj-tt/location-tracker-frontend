@@ -34,17 +34,28 @@ const Calendar = () => {
   const [users, setUsers] = useState(null);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [eventsFromAPI, setEventsFromAPI] = useState([]);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editEvent, setEditEvent] = useState({
+    title: "",
+    start: "",
+    end: "",
+    attendees: [],
+  });
 
   const fetchEvents_ = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/auth/events");
-      setEventsFromAPI(response.data.events);
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      if (userData && userData.id) {
+        const filteredEvents = response.data.events.filter((event) =>
+          event.attendees.some((attendee) => attendee.id === userData.id)
+        );
+        setEventsFromAPI(filteredEvents);
+      }
     } catch (error) {
       console.error("Error fetching events:", error);
     }
   };
-
-  console.log("eventsfromAPI", eventsFromAPI);
 
   useEffect(() => {
     fetchEvents_();
@@ -57,7 +68,13 @@ const Calendar = () => {
         const response = await axios.get(
           "http://localhost:3000/api/auth/users"
         );
-        setUsers(response.data.users);
+        const userData = JSON.parse(localStorage.getItem("userData"));
+
+        const filteredUsers = response.data.users.filter(
+          (user) => user.id !== userData?.id
+        );
+
+        setUsers(filteredUsers);
       } catch (error) {
         console.error("Error fetching users:", error);
       } finally {
@@ -69,27 +86,8 @@ const Calendar = () => {
   }, []);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      const mockEvents = [
-        {
-          id: 1,
-          title: "Team Meeting",
-          start: "2024-12-05T10:00:00",
-          end: "2024-12-05T11:00:00",
-          attendees: ["Alice", "Bob"],
-        },
-        {
-          id: 2,
-          title: "Project Deadline",
-          start: "2024-12-07T21:59:00",
-          end: "2024-12-07T23:00:00",
-          attendees: ["Charlie"],
-        },
-      ];
-      setEvents(mockEvents);
-    };
-    fetchEvents();
-  }, []);
+    setEvents(eventsFromAPI);
+  }, [eventsFromAPI]);
 
   const handleEventClick = (info) => {
     setSelectedEvent(info.event);
@@ -101,16 +99,28 @@ const Calendar = () => {
   };
 
   const handleAddEvent = async () => {
+    const userData = JSON.parse(localStorage.getItem("userData"));
+
+    if (!userData || !userData.id) {
+      console.error("User ID not found in localStorage");
+      return;
+    }
+
     const eventToAdd = {
       title: newEvent.title,
       start: newEvent.start,
       end: newEvent.end,
-      attendees: newEvent.attendees
-        .map((attendeeUsername) => {
-          const user = users.find((user) => user.username === attendeeUsername);
-          return user ? user.id : null;
-        })
-        .filter((id) => id !== null),
+      attendees: [
+        ...newEvent.attendees
+          .map((attendeeUsername) => {
+            console.log("attendeeUsername", attendeeUsername);
+            console.log("users", users);
+            const user = users.find((user) => user.id === attendeeUsername);
+            return user ? user.id : null;
+          })
+          .filter((id) => id !== null),
+        userData.id,
+      ],
     };
 
     try {
@@ -119,28 +129,83 @@ const Calendar = () => {
         eventToAdd
       );
 
-      if (response.data.success) {
-        setEvents([...events, { ...response.data.event }]);
-        setIsDialogOpen(false);
-        setNewEvent({ title: "", start: "", end: "", attendees: [] });
-      } else {
-        console.error("Failed to create event:", response.data.message);
-      }
+      setEvents([...events, { ...response.data.event }]);
+      setIsDialogOpen(false);
+      setNewEvent({ title: "", start: "", end: "", attendees: [] });
+      fetchEvents_();
     } catch (error) {
       console.error("Error creating event:", error);
     }
   };
 
-  const handleDeleteEvent = () => {
-    if (!selectedEvent) return;
+  const handleEditEvent = async () => {
+    const userData = JSON.parse(localStorage.getItem("userData"));
 
-    setEvents((prevEvents) =>
-      prevEvents.filter((event) => event.id !== selectedEvent.id)
-    );
+    if (!userData || !userData.id) {
+      console.error("User ID not found in localStorage");
+      return;
+    }
+    try {
+      const updatedEvent = {
+        ...editEvent,
+        attendees: [
+          ...editEvent.attendees
+            .map((id) => {
+              return id;
+            })
+            .filter((id) => id !== null),
+        ],
+      };
 
-    selectedEvent.remove();
-    setSelectedEvent(null);
+      const response = await axios.put(
+        `http://localhost:3000/api/auth/events/${selectedEvent.id}`,
+        updatedEvent
+      );
+
+      if (response.status === 200) {
+        const updatedEvents = events.map((event) =>
+          event.id === selectedEvent.id
+            ? { ...event, ...response.data.event }
+            : event
+        );
+        setEvents(updatedEvents);
+        setIsEditDialogOpen(false);
+        setSelectedEvent(null);
+        fetchEvents_();
+      } else {
+        console.error("Failed to update event:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error updating event:", error);
+    }
   };
+
+  const handleEditEventClick = () => {
+    if (selectedEvent) {
+      const attendees = selectedEvent.extendedProps.attendees || [];
+      console.log("attendees", attendees);
+      setEditEvent({
+        title: selectedEvent.title,
+        start: selectedEvent.startStr,
+        end: selectedEvent.endStr,
+        attendees: attendees.map((user) => {
+          return user.id;
+        }),
+      });
+      setIsEditDialogOpen(true);
+    }
+  };
+
+  // const handleDeleteEvent = () => {
+  //   if (!selectedEvent) return;
+
+  //   setEvents((prevEvents) =>
+  //     prevEvents.filter((event) => event.id !== selectedEvent.id)
+  //   );
+
+  //   selectedEvent.remove();
+  //   setSelectedEvent(null);
+  // };
 
   return (
     <Box
@@ -243,7 +308,7 @@ const Calendar = () => {
                 <ul style={{ margin: 0, paddingLeft: "1.5em" }}>
                   {selectedEvent.extendedProps.attendees.map(
                     (attendee, index) => (
-                      <li key={index}>{attendee}</li>
+                      <li key={index}>{attendee.name}</li>
                     )
                   )}
                 </ul>
@@ -259,9 +324,9 @@ const Calendar = () => {
                   borderColor: "#f44336",
                   "&:hover": { backgroundColor: "#f44336", color: "white" },
                 }}
-                onClick={handleDeleteEvent}
+                onClick={handleEditEventClick}
               >
-                Delete Event
+                Edit
               </Button>
               <Button
                 variant="contained"
@@ -373,7 +438,7 @@ const Calendar = () => {
                 </MenuItem>
                 {users &&
                   users.map((person, index) => (
-                    <MenuItem key={index} value={person.username}>
+                    <MenuItem key={index} value={person.id}>
                       {person.username} ({person.email})
                     </MenuItem>
                   ))}
@@ -405,6 +470,123 @@ const Calendar = () => {
           >
             Cancel
           </Button>
+        </Box>
+      </Dialog>
+
+      <Dialog
+        open={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+        PaperProps={{
+          sx: { borderRadius: 3, padding: 2 },
+        }}
+      >
+        <Box sx={{ width: 350 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              marginBottom: 2,
+              color: "#008080",
+              textAlign: "center",
+              fontWeight: "bold",
+            }}
+          >
+            Edit Event
+          </Typography>
+          <InputLabel sx={{ mb: 1 }}>Title</InputLabel>
+          <TextField
+            placeholder="Enter Title"
+            fullWidth
+            value={editEvent.title}
+            onChange={(e) =>
+              setEditEvent({ ...editEvent, title: e.target.value })
+            }
+            sx={{
+              marginBottom: 2,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+              },
+            }}
+          />
+          <InputLabel sx={{ mb: 1 }}>Start Date</InputLabel>
+          <TextField
+            type="datetime-local"
+            fullWidth
+            value={editEvent.start}
+            onChange={(e) =>
+              setEditEvent({ ...editEvent, start: e.target.value })
+            }
+            sx={{
+              marginBottom: 2,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+              },
+            }}
+          />
+          <InputLabel sx={{ mb: 1 }}>End Date</InputLabel>
+          <TextField
+            type="datetime-local"
+            fullWidth
+            value={editEvent.end}
+            onChange={(e) =>
+              setEditEvent({ ...editEvent, end: e.target.value })
+            }
+            sx={{
+              marginBottom: 3,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+              },
+            }}
+          />
+          <InputLabel sx={{ mb: 1 }}>Invite People</InputLabel>
+          <FormControl fullWidth sx={{ marginBottom: 3 }}>
+            <Select
+              multiple
+              value={editEvent.attendees}
+              onChange={(e) =>
+                setEditEvent({ ...editEvent, attendees: e.target.value })
+              }
+              displayEmpty
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+              }}
+            >
+              <MenuItem value="" disabled>
+                <em>Select People</em>
+              </MenuItem>
+              {users &&
+                users.map((user) => (
+                  <MenuItem key={user.id} value={user.id}>
+                    {user.username} ({user.email})
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#008080",
+                color: "white",
+                "&:hover": { backgroundColor: "#008080" },
+              }}
+              onClick={handleEditEvent}
+            >
+              Save Changes
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                color: "#f44336",
+                borderColor: "#f44336",
+                "&:hover": { backgroundColor: "#f44336", color: "white" },
+              }}
+              onClick={() => setIsEditDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+          </Box>
         </Box>
       </Dialog>
     </Box>

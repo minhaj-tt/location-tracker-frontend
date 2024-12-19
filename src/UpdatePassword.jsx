@@ -16,8 +16,6 @@ const UpdatePassword = () => {
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const tokenFromUrl = queryParams.get("token");
-
-    console.log("tokenFromUrl", tokenFromUrl);
     if (tokenFromUrl) {
       setToken(tokenFromUrl);
     } else {
